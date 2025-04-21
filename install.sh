@@ -8,6 +8,9 @@ INSTALL_DIR="gaia"
 # Optional version tag
 VERSION=${1:-"master"}
 
+# Fix for broken terminal state after piping (Ubuntu issue)
+stty sane 2>/dev/null || true
+
 echo "[INFO] Cloning Gaia setup scripts (branch/tag: $VERSION)..."
 git clone --depth 1 --branch "$VERSION" "$REPO_URL" "$INSTALL_DIR"
 cd "$INSTALL_DIR"
