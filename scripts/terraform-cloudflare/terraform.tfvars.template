@@ -1,0 +1,6 @@
+cloudflare_api_token = "__CF_API_TOKEN__"
+cloudflare_zone_id   = "__CF_ZONE_ID__"
+server_ip            = "__SERVER_IP__"
+server_ipv6          = "__SERVER_IPV6__"
+domain_name          = "__DOMAIN_NAME__"
+subdomains           = [__SUBDOMAINS__]
