@@ -9,13 +9,13 @@
 Install everything with **a single command**:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/kireevroi/gaia/main/install.sh)
+curl -s https://raw.githubusercontent.com/kireevroi/gaia/master/install.sh | bash
 ```
 
 Or use a specific tag:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/kireevroi/gaia/main/install.sh) v1.0.0
+curl -s https://raw.githubusercontent.com/kireevroi/gaia/master/install.sh | bash -s -- v1.0.0
 ```
 
 ---

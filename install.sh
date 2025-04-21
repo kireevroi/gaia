@@ -19,5 +19,7 @@ chmod +x setup.sh
 echo "[INFO] Starting Gaia setup..."
 sudo ./setup.sh
 
-# To run: bash <(curl -s https://raw.githubusercontent.com/kireevroi/gaia/main/install.sh)
-# Or for a tag: bash <(curl -s https://raw.githubusercontent.com/kireevroi/gaia/main/install.sh) v1.0.0
+# To run:
+# curl -s https://raw.githubusercontent.com/kireevroi/gaia/master/install.sh | bash
+# Or with a tag:
+# curl -s https://raw.githubusercontent.com/kireevroi/gaia/master/install.sh | bash -s -- v1.0.0
