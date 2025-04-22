@@ -102,14 +102,6 @@ terraform init
 info "Generating Terraform plan (dry-run)..."
 terraform plan -out=tfplan.out || { error "Terraform plan failed."; exit 1; }
 
-info "Previewing Terraform plan..."
-if [ -f tfplan.out ]; then
-  terraform show tfplan.out | less
-  echo
-  read -p "Press Enter to continue with apply..." _
-else
-  error "Plan file not found. Skipping preview."
-fi
 
 if whiptail --yesno "Apply the above Terraform DNS changes?" 10 78 --title "Confirm Apply"; then
     terraform apply tfplan.out
