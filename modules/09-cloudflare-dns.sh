@@ -12,7 +12,11 @@ You can check and update this at your domain registrar." 10 78 --title "Importan
 whiptail --msgbox "🔐 You'll need your Cloudflare API Token and Zone ID.
 
 🔗 API Token (create here): https://dash.cloudflare.com/profile/api-tokens
-🔗 Zone ID (Overview tab): https://dash.cloudflare.com" 11 78 --title "Cloudflare Credentials Info" || exit 1
+    ✅ Permissions needed:
+       - Zone → DNS → Edit
+       - Zone → Zone Settings → Read
+
+🔗 Zone ID (Overview tab): https://dash.cloudflare.com" 13 78 --title "Cloudflare Credentials Info" || exit 1
 
 # Install Terraform if not present
 if ! command -v terraform &> /dev/null; then
@@ -51,6 +55,17 @@ sed -i "s|__SERVER_IP__|$SERVER_IP|" "$TERRAFORM_DIR/terraform.tfvars"
 sed -i "s|__SERVER_IPV6__|$SERVER_IPV6|" "$TERRAFORM_DIR/terraform.tfvars"
 sed -i "s|__DOMAIN_NAME__|$DOMAIN_NAME|" "$TERRAFORM_DIR/terraform.tfvars"
 sed -i "s|__SUBDOMAINS__|$SUBDOMAINS_FMT|" "$TERRAFORM_DIR/terraform.tfvars"
+
+info "Validating Cloudflare token permissions..."
+
+curl -s -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+  -H "Authorization: Bearer $CF_API_TOKEN" \
+  -H "Content-Type: application/json" | grep -q '"success":true'
+
+if [ $? -ne 0 ]; then
+  error "Cloudflare API token is invalid or lacks required permissions."
+  exit 1
+fi
 
 cd "$TERRAFORM_DIR"
 terraform init
