@@ -84,10 +84,15 @@ cd "$TERRAFORM_DIR"
 terraform init
 
 info "Generating Terraform plan (dry-run)..."
-terraform plan -out=tfplan.out
+terraform plan -out=tfplan.out || { error "Terraform plan failed."; exit 1; }
 
 info "Previewing plan output..."
-terraform show tfplan.out | head -n 100
+if [ -f tfplan.out ]; then
+  PLAN_CONTENT=$(terraform show tfplan.out | head -n 100)
+  whiptail --title "Terraform Plan Preview" --msgbox "$PLAN_CONTENT" 20 78
+else
+  error "Plan file not found. Skipping preview."
+fi
 
 echo
 
