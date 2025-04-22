@@ -36,7 +36,23 @@ Settings → API section of your domain's dashboard." 12 78 --title "Cloudflare 
 CF_API_TOKEN=$(whiptail --inputbox "Enter your Cloudflare API Token:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 CF_ZONE_ID=$(whiptail --inputbox "Enter your Cloudflare Zone ID:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 SERVER_IP=$(whiptail --inputbox "Enter your Server IPv4 address:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+
+# Validate IPv4
+if ! [[ $SERVER_IP =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+  error "Invalid IPv4 address: $SERVER_IP"
+  exit 1
+fi
+
 SERVER_IPV6=$(whiptail --inputbox "Enter your Server IPv6 address (leave empty to skip):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+
+# Strip CIDR suffix if present (e.g. /64)
+SERVER_IPV6=${SERVER_IPV6%%/*}
+
+# Validate IPv6
+if [ -n "$SERVER_IPV6" ] && ! [[ $SERVER_IPV6 =~ ^([0-9a-fA-F]{1,4}:){1,7}[0-9a-fA-F]{1,4}$ ]]; then
+  error "Invalid IPv6 address: $SERVER_IPV6"
+  exit 1
+fi
 DOMAIN_NAME=$(whiptail --inputbox "Enter your main domain (e.g., ethereatech.com):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 SUBDOMAINS=$(whiptail --inputbox "Enter subdomains separated by commas (e.g., monitor,logs,docker):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 
@@ -86,15 +102,14 @@ terraform init
 info "Generating Terraform plan (dry-run)..."
 terraform plan -out=tfplan.out || { error "Terraform plan failed."; exit 1; }
 
-info "Previewing plan output..."
+info "Previewing Terraform plan..."
 if [ -f tfplan.out ]; then
-  PLAN_CONTENT=$(terraform show tfplan.out | head -n 100)
-  whiptail --title "Terraform Plan Preview" --msgbox "$PLAN_CONTENT" 20 78
+  terraform show tfplan.out | less
+  echo
+  read -p "Press Enter to continue with apply..." _
 else
   error "Plan file not found. Skipping preview."
 fi
-
-echo
 
 if whiptail --yesno "Apply the above Terraform DNS changes?" 10 78 --title "Confirm Apply"; then
     terraform apply tfplan.out
