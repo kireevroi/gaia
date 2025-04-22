@@ -1,7 +1,3 @@
-provider "cloudflare" {
-  api_token = var.cloudflare_api_token
-}
-
 resource "cloudflare_record" "root_ipv4" {
   zone_id = var.cloudflare_zone_id
   name    = "@"
