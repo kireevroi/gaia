@@ -20,7 +20,10 @@ find modules -name '*.sh' -exec chmod +x {} \;
 chmod +x setup.sh
 
 echo "[INFO] Starting Gaia setup..."
-./setup.sh
+./setup.sh || {
+  echo "[ERROR] Setup was canceled or failed." >&2
+  exit 1
+}
 
 # To run:
 # curl -s https://raw.githubusercontent.com/kireevroi/gaia/master/install.sh | bash

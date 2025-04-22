@@ -4,8 +4,15 @@ source ./scripts/helpers.sh
 
 info "Setting up Terraform for Cloudflare DNS..."
 
-echo "\n🔗 Get your Cloudflare API Token here: https://dash.cloudflare.com/profile/api-tokens"
-echo "🔗 Find your Zone ID under domain > Overview tab: https://dash.cloudflare.com/"
+whiptail --msgbox "📌 Make sure your domain's nameservers are set to Cloudflare.
+If not, DNS changes won't take effect!
+
+You can check and update this at your domain registrar." 10 78 --title "Important DNS Note" || exit 1
+
+whiptail --msgbox "🔐 You'll need your Cloudflare API Token and Zone ID.
+
+🔗 API Token (create here): https://dash.cloudflare.com/profile/api-tokens
+🔗 Zone ID (Overview tab): https://dash.cloudflare.com" 11 78 --title "Cloudflare Credentials Info" || exit 1
 
 # Install Terraform if not present
 if ! command -v terraform &> /dev/null; then
@@ -21,12 +28,12 @@ if ! command -v terraform &> /dev/null; then
 fi
 
 # Gather Inputs
-CF_API_TOKEN=$(whiptail --inputbox "Enter your Cloudflare API Token:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3)
-CF_ZONE_ID=$(whiptail --inputbox "Enter your Cloudflare Zone ID:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3)
-SERVER_IP=$(whiptail --inputbox "Enter your Server IPv4 address:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3)
-SERVER_IPV6=$(whiptail --inputbox "Enter your Server IPv6 address (leave empty to skip):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3)
-DOMAIN_NAME=$(whiptail --inputbox "Enter your main domain (e.g., ethereatech.com):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3)
-SUBDOMAINS=$(whiptail --inputbox "Enter subdomains separated by commas (e.g., monitor,logs,docker):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3)
+CF_API_TOKEN=$(whiptail --inputbox "Enter your Cloudflare API Token:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+CF_ZONE_ID=$(whiptail --inputbox "Enter your Cloudflare Zone ID:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+SERVER_IP=$(whiptail --inputbox "Enter your Server IPv4 address:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+SERVER_IPV6=$(whiptail --inputbox "Enter your Server IPv6 address (leave empty to skip):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+DOMAIN_NAME=$(whiptail --inputbox "Enter your main domain (e.g., ethereatech.com):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+SUBDOMAINS=$(whiptail --inputbox "Enter subdomains separated by commas (e.g., monitor,logs,docker):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 
 if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ZONE_ID" ] || [ -z "$SERVER_IP" ] || [ -z "$DOMAIN_NAME" ]; then
     error "Cloudflare setup canceled or inputs invalid."
