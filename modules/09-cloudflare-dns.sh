@@ -38,7 +38,7 @@ CF_ZONE_ID=$(whiptail --inputbox "Enter your Cloudflare Zone ID:" 8 78 --title "
 SERVER_IP=$(whiptail --inputbox "Enter your Server IPv4 address:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 SERVER_IPV6=$(whiptail --inputbox "Enter your Server IPv6 address (leave empty to skip):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 DOMAIN_NAME=$(whiptail --inputbox "Enter your main domain (e.g., ethereatech.com):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
-SUBDOMAINS=$(whiptail --inputbox "Enter subdomains separated by commas (e.g., monitor,logs,docker):" 8 78 --title "Cloudflare Setup" --default "monitor,logs,grafana,prometheus,loki,docker,portainer,api,admin,web,auth" 3>&1 1>&2 2>&3) || exit 1
+SUBDOMAINS=$(whiptail --inputbox "Enter subdomains separated by commas (e.g., monitor,logs,docker):" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 
 if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ZONE_ID" ] || [ -z "$SERVER_IP" ] || [ -z "$DOMAIN_NAME" ]; then
     error "Cloudflare setup canceled or inputs invalid."
