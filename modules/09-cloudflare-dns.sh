@@ -111,3 +111,12 @@ else
 fi
 
 cd - > /dev/null
+
+
+# TODO: Add support for multiple zones, like .ru, .com, etc.
+# TODO: Clean up scripts
+# TODO: Make more intuitive
+# TODO: Add optional mail server configuration
+# TODO: Add option to disable IPv6
+# TODO: Add option to disable IPv4
+# TODO: Add option to disable DNS
