@@ -27,7 +27,6 @@ whiptail --msgbox "🔐 You'll need your Cloudflare API Token.
    - Zone → DNS → Edit
    - Zone → Zone Settings → Read" 13 78 --title "Cloudflare API Token Info" || exit 1
 
-CF_API_TOKEN=$(whiptail --inputbox "Enter your Cloudflare API Token:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 
 whiptail --msgbox "🆔 You'll also need your Cloudflare Zone ID.
 
@@ -50,6 +49,7 @@ if ! command -v terraform &> /dev/null; then
 fi
 
 # Gather Inputs
+
 CF_API_TOKEN=$(whiptail --inputbox "Enter your Cloudflare API Token:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 CF_ZONE_ID=$(whiptail --inputbox "Enter your Cloudflare Zone ID:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
 SERVER_IP=$(whiptail --inputbox "Enter your Server IPv4 address:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
