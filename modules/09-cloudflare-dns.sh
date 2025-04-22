@@ -9,14 +9,32 @@ If not, DNS changes won't take effect!
 
 You can check and update this at your domain registrar." 10 78 --title "Important DNS Note" || exit 1
 
-whiptail --msgbox "🔐 You'll need your Cloudflare API Token and Zone ID.
+whiptail --msgbox "🌐 First, make sure you've added your domain to Cloudflare.
 
-🔗 API Token (create here): https://dash.cloudflare.com/profile/api-tokens
-    ✅ Permissions needed:
-       - Zone → DNS → Edit
-       - Zone → Zone Settings → Read
+Steps:
+1. Go to https://dash.cloudflare.com
+2. Click 'Add a Site'
+3. Enter your domain (e.g., ethereatech.com)
+4. Follow the steps to point your nameservers to Cloudflare.
 
-🔗 Zone ID (Overview tab): https://dash.cloudflare.com" 13 78 --title "Cloudflare Credentials Info" || exit 1
+⚠️ Terraform cannot add domains — only configure records inside one that already exists." 14 78 --title "Add Domain to Cloudflare" || exit 1
+
+whiptail --msgbox "🔐 You'll need your Cloudflare API Token.
+
+🔗 Create here: https://dash.cloudflare.com/profile/api-tokens
+
+✅ Permissions required:
+   - Zone → DNS → Edit
+   - Zone → Zone Settings → Read" 13 78 --title "Cloudflare API Token Info" || exit 1
+
+CF_API_TOKEN=$(whiptail --inputbox "Enter your Cloudflare API Token:" 8 78 --title "Cloudflare Setup" 3>&1 1>&2 2>&3) || exit 1
+
+whiptail --msgbox "🆔 You'll also need your Cloudflare Zone ID.
+
+⚠️ If you haven't added a domain to Cloudflare yet, do that first.
+
+Once a domain is added, your Zone ID will be visible in:
+Settings → API section of your domain's dashboard." 12 78 --title "Cloudflare Zone ID Info" || exit 1
 
 # Install Terraform if not present
 if ! command -v terraform &> /dev/null; then
@@ -64,6 +82,17 @@ curl -s -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
 
 if [ $? -ne 0 ]; then
   error "Cloudflare API token is invalid or lacks required permissions."
+  exit 1
+fi
+
+info "Validating Cloudflare zone ownership..."
+
+ZONE_VERIFY=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID" \
+  -H "Authorization: Bearer $CF_API_TOKEN" \
+  -H "Content-Type: application/json")
+
+if ! echo "$ZONE_VERIFY" | grep -q '"success":true'; then
+  error "Failed to retrieve zone. Check if the Zone ID is correct and if the domain is added to your account."
   exit 1
 fi
 
