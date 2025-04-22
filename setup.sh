@@ -1,3 +1,4 @@
+// setup.sh
 #!/bin/bash
 CHOICES=$(whiptail --title "Etherea Setup" --checklist \
 "Choose setup modules:" 20 78 12 \
@@ -16,6 +17,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+source ./scripts/helpers.sh
+
 for choice in $CHOICES; do
     case $choice in
         "\"system\"") bash modules/01-system.sh ;;
@@ -26,7 +29,7 @@ for choice in $CHOICES; do
         "\"security\"") bash modules/06-security.sh ;;
         "\"gitlab\"") bash modules/07-gitlab.sh ;;
         "\"storage\"") bash modules/08-storage.sh ;;
-        "\"cloudflare-dns\"") bash modules/09-cloudflare-dns.sh ;;
+        "\"cloudflare-dns\"") source modules/09-cloudflare-dns.sh ;;
     esac
 done
 
